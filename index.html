@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WARPRO - Warkop Meets Professional</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 0; }
+    header { background: #2e2e2e; color: white; padding: 1rem 2rem; text-align: center; }
+    nav { background: #444; color: white; padding: 0.5rem 2rem; display: flex; justify-content: space-between; }
+    nav a { color: white; text-decoration: none; margin-right: 1rem; }
+    main { padding: 2rem; }
+    section { background: white; padding: 1rem 2rem; margin-bottom: 2rem; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    h2 { color: #333; }
+    .cta-button { background: #d35400; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd; }
+    th { background: #f0f0f0; }
+    .popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 10px; padding: 2rem; box-shadow: 0 0 20px rgba(0,0,0,0.3); z-index: 1000; }
+    .popup.show { display: block; }
+    .popup-header { font-weight: bold; margin-bottom: 1rem; }
+    .popup-close { float: right; cursor: pointer; color: red; }
+    .profile-card { padding: 1rem; background: #fffbe6; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); margin-top: 1rem; }
+    .job-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .job-card { background: #ffffff; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s ease; }
+    .job-card:hover { transform: scale(1.02); }
+    .job-card h3 { margin-top: 0; font-size: 1.1rem; }
+    .job-card p { margin: 0.5rem 0; font-size: 0.9rem; }
+    .status-progress { color: #e67e22; font-weight: bold; }
+    .status-pending { color: #c0392b; font-weight: bold; }
+    .status-complete { color: #27ae60; font-weight: bold; }
+  </style>
+  <script>
+    const jobs = [
+      { title: 'Desain Logo UMKM', status: 'Sedang Berjalan', deadline: '10 Agustus', worker: '@rizki_design' },
+      { title: 'Pembuatan CV Profesional', status: 'Belum Diambil', deadline: '12 Agustus', worker: '-' },
+      { title: 'Setup Instagram Bisnis', status: 'Selesai', deadline: '5 Agustus', worker: '@dewi_marketing' },
+      { title: 'Analisis Data Penjualan', status: 'Belum Diambil', deadline: '18 Agustus', worker: '-' },
+      { title: 'Visualisasi Data Pelanggan', status: 'Sedang Berjalan', deadline: '20 Agustus', worker: '@data_rani' }
+    ];
+
+    function getStatusColorClass(status) {
+      switch (status) {
+        case 'Sedang Berjalan': return 'status-progress';
+        case 'Belum Diambil': return 'status-pending';
+        case 'Selesai': return 'status-complete';
+        default: return '';
+      }
+    }
+
+    function showPopup(jobTitle, status, deadline, worker) {
+      let detail = '';
+      switch (jobTitle) {
+        case 'Desain Logo UMKM':
+          detail = 'Membuat logo untuk UMKM makanan dengan nuansa tradisional dan modern. Format AI/PNG.';
+          break;
+        case 'Pembuatan CV Profesional':
+          detail = 'Membuat CV menarik dan profesional untuk posisi Digital Marketing. Format PDF dan Word.';
+          break;
+        case 'Setup Instagram Bisnis':
+          detail = 'Menyiapkan bio, highlights, template posting, dan konten awal untuk akun Instagram UMKM.';
+          break;
+        case 'Analisis Data Penjualan':
+          detail = 'Analisis tren penjualan 6 bulan terakhir menggunakan Excel atau Google Sheets. Termasuk visualisasi.';
+          break;
+        case 'Visualisasi Data Pelanggan':
+          detail = 'Membuat dashboard interaktif dari data pelanggan (usia, lokasi, pembelian) menggunakan tools data.';
+          break;
+        default:
+          detail = 'Tidak ada deskripsi pekerjaan.';
+      }
+
+      document.getElementById('popup-content').innerHTML = `
+        <div class="popup-header">
+          <span class="popup-close" onclick="hidePopup()">&times;</span>
+          Detail Pekerjaan
+        </div>
+        <p><strong>Judul:</strong> ${jobTitle}</p>
+        <p><strong>Status:</strong> ${status}</p>
+        <p><strong>Deadline:</strong> ${deadline}</p>
+        <p><strong>Dikerjakan Oleh:</strong> ${worker}</p>
+        <p><strong>Deskripsi:</strong> ${detail}</p>
+        <button class="cta-button">${status}</button>
+      `;
+      document.getElementById('job-popup').classList.add('show');
+    }
+
+    function hidePopup() {
+      document.getElementById('job-popup').classList.remove('show');
+    }
+
+    function renderJobs(jobList) {
+      const jobGrid = document.getElementById('jobGrid');
+      jobGrid.innerHTML = jobList.length > 0 ? jobList.map(job => {
+        const statusClass = getStatusColorClass(job.status);
+        return `
+          <div class="job-card" onclick="showPopup('${job.title}', '${job.status}', '${job.deadline}', '${job.worker}')">
+            <h3>${job.title}</h3>
+            <p class="${statusClass}">Status: ${job.status}</p>
+          </div>
+        `;
+      }).join('') : '<p>Tidak ada pekerjaan yang sesuai.</p>';
+    }
+
+    function filterJobs() {
+      const searchInput = document.getElementById('jobSearch').value.toLowerCase();
+      const statusInput = document.getElementById('statusFilter').value;
+      const filtered = jobs.filter(job => {
+        const matchKeyword = job.title.toLowerCase().includes(searchInput);
+        const matchStatus = statusInput === '' || job.status === statusInput;
+        return matchKeyword && matchStatus;
+      });
+      renderJobs(filtered);
+    }
+    window.onload = () => renderJobs(jobs);
+  </script>
+</head>
+<body>
+  <div id="job-popup" class="popup">
+    <div id="popup-content"></div>
+  </div>
+  <header>
+    <h1>WARPRO</h1>
+    <p>Warkop Meets Professional - Komunitas Freelance Berbasis Warung</p>
+  </header>
+  <nav>
+    <div>
+      <a href="#tentang">Tentang</a>
+      <a href="#job-board">Job Board</a>
+      <a href="#komunitas">Komunitas</a>
+      <a href="#konsultasi">Konsultasi</a>
+      <a href="#rangking">Ranking</a>
+      <a href="#status-customer">Status Customer</a>
+      <a href="#profil-pelanggan">Profil Pelanggan</a>
+    </div>
+    <div>
+      <a href="#masuk">Masuk</a>
+      <a href="#daftar">Daftar</a>
+    </div>
+  </nav>
+  <main>
+    <section id="tentang">
+        <h2>Tentang WARPRO</h2>
+        <p>WARPRO adalah platform web yang menghubungkan pelanggan setia warkop/mie instan dengan dunia kerja freelance melalui sistem loyalitas, komunitas, dan papan job digital. Pelanggan yang aktif dapat mengakses fitur job board, konsultasi, dan mengajukan proyek.</p>
+    </section>
+    
+    <section id="job-board">
+        <h2>Job Board</h2>
+        <input type="text" id="jobSearch" onkeyup="filterJobs()" placeholder="Cari pekerjaan..." style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc;">
+        <select id="statusFilter" onchange="filterJobs()" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc;">
+            <option value="">Semua Status</option>
+            <option value="Belum Diambil">Belum Diambil</option>
+            <option value="Sedang Berjalan">Sedang Berjalan</option>
+            <option value="Selesai">Selesai</option>
+        </select>
+        <div class="job-grid" id="jobGrid"></div>
+        </div>
+        <button class="cta-button">Pasang Pekerjaan Baru</button>
+    </section>
+
+    <section id="rangking">
+      <h2>Top 5 Pekerja Terbaik</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Ranking</th>
+            <th>Nama</th>
+            <th>Skor</th>
+            <th>Jumlah Proyek</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>@dewi_marketing</td><td>98</td><td>12</td></tr>
+          <tr><td>2</td><td>@rizki_design</td><td>91</td><td>10</td></tr>
+          <tr><td>3</td><td>@arya_edit</td><td>87</td><td>9</td></tr>
+          <tr><td>4</td><td>@lia_uiux</td><td>85</td><td>8</td></tr>
+          <tr><td>5</td><td>@fajarweb</td><td>82</td><td>8</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="komunitas">
+      <h2>Komunitas WARPRO</h2>
+      <p>Gabung ke komunitas WARPRO dan dapatkan akses ke job eksklusif, diskusi skill, dan event offline di warkop kami!</p>
+      <button class="cta-button">Gabung Komunitas</button>
+    </section>
+
+    <section id="konsultasi">
+      <h2>Konsultasi</h2>
+      <p>Butuh saran bisnis, desain, atau teknis? Konsultan kami siap bantu secara online dan offline!</p>
+      <button class="cta-button">Pesan Konsultasi</button>
+    </section>
+
+    <section id="status-customer">
+      <h2>Status Customer</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nama</th>
+            <th>Pembelian Terakhir</th>
+            <th>Status Loyalitas</th>
+            <th>Akses Job Board</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Dina Ayu</td><td>2 Agustus</td><td>Gold</td><td>✅</td></tr>
+          <tr><td>Rama Putra</td><td>31 Juli</td><td>Silver</td><td>✅</td></tr>
+          <tr><td>Ilham Dwi</td><td>25 Juli</td><td>Bronze</td><td>❌</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="profil-pelanggan">
+      <h2>Profil Pelanggan</h2>
+      <div class="profile-card">
+        <p><strong>Nama:</strong> Dina Ayu</p>
+        <p><strong>Email:</strong> dina@example.com</p>
+        <p><strong>Status Keanggotaan:</strong> Gold</p>
+        <!-- <p><strong>Total Pembelian:</strong> Rp 1.250.000</p> -->
+        <p><strong>Proyek yang Diunggah:</strong></p>
+        <ul>
+          <li>Desain Logo UMKM - 10 Agustus</li>
+          <li>Analisis Data Penjualan - 18 Agustus</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+  
+  <footer style="background:#2e2e2e; color:white; text-align:center; padding:1rem; margin-top:2rem;">
+  <p>&copy; 2025 WARPRO - Warkop Meets Professional. All rights reserved.</p>
+  <p><a href="#" style="color:#f39c12; text-decoration:none;">Kebijakan Privasi</a> | <a href="#" style="color:#f39c12; text-decoration:none;">Syarat & Ketentuan</a></p>
+</footer>
+</body>
+</html>
