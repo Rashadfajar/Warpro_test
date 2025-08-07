@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - WARPRO</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f0f0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    .login-container { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 300px; }
+    h2 { text-align: center; margin-bottom: 1.5rem; }
+    input[type="text"], input[type="password"] {
+      width: 100%; padding: 0.75rem; margin-bottom: 1rem; border-radius: 5px; border: 1px solid #ccc;
+    }
+    button { width: 100%; background: #d35400; color: white; border: none; padding: 0.75rem; border-radius: 5px; cursor: pointer; }
+    .error { color: red; text-align: center; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Login WARPRO</h2>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Masuk</button>
+    <div class="error" id="errorMsg"></div>
+  </div>
+
+  <script>
+    function login() {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      const errorMsg = document.getElementById('errorMsg');
+
+      if (user === 'admin' && pass === 'admin123') {
+        sessionStorage.setItem('isLoggedIn', 'true');
+        sessionStorage.setItem('isAdmin', 'true');
+        window.location.href = 'admin.html';
+      } else if (user === 'rashad' && pass === '1234') {
+        sessionStorage.setItem('isLoggedIn', 'true');
+        sessionStorage.setItem('isAdmin', 'false');
+        window.location.href = 'profil.html';
+      } else {
+        errorMsg.textContent = 'Username atau password salah.';
+      }
+    }
+  </script>
+</body>
+</html>

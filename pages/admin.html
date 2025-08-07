@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - WARPRO</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 2rem; }
+    .admin-panel { max-width: 700px; margin: auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    h2 { text-align: center; }
+    label { display: block; margin-top: 1rem; font-weight: bold; }
+    input, textarea, select {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.25rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.6rem 1.2rem;
+      background: #d35400;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .logout {
+      text-align: right;
+      margin-bottom: 1rem;
+    }
+    .logout a {
+      text-decoration: none;
+      color: #d35400;
+    }
+    .job-list { margin-top: 2rem; }
+    .job-item {
+      border: 1px solid #ddd;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      background: #fdfdfd;
+    }
+    .job-actions { margin-top: 0.5rem; }
+    .job-actions button {
+      margin-right: 0.5rem;
+      background: #888;
+    }
+    .job-actions button.delete {
+      background: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-panel">
+    <nav style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <a href="../index.html" style="margin-right: 1rem;">🏠 Beranda</a>
+            <a href="admin.html" style="font-weight: bold;">➕ Tambah Job</a>
+        </div>
+        <div>
+            <a href="login.html" onclick="sessionStorage.clear()">Logout</a>
+        </div>
+    </nav>
+    <h2>Admin Panel - Tambah dan Kelola Job</h2>
+    <form id="jobForm">
+      <input type="hidden" id="editIndex" value="">
+      <label>Judul:</label>
+      <input type="text" id="title" required>
+
+      <label>Deskripsi:</label>
+      <textarea id="description" required></textarea>
+
+      <label>Deadline:</label>
+      <input type="date" id="deadline" required>
+
+      <label>Status:</label>
+      <select id="status" required>
+        <option value="Belum Diambil">Belum Diambil</option>
+        <option value="Sedang Berjalan">Sedang Berjalan</option>
+        <option value="Selesai">Selesai</option>
+      </select>
+
+      <button type="submit" id="submitBtn">Tambah Pekerjaan</button>
+    </form>
+
+    <div class="job-list" id="jobList"></div>
+  </div>
+
+  <script>
+    // Redirect jika bukan admin
+    if (sessionStorage.getItem('isAdmin') !== 'true') {
+      window.location.href = 'index.html';
+    }
+
+    const form = document.getElementById('jobForm');
+    const jobListContainer = document.getElementById('jobList');
+    const submitBtn = document.getElementById('submitBtn');
+
+    let jobs = JSON.parse(localStorage.getItem('adminJobs')) || [];
+
+    function saveJobs() {
+      localStorage.setItem('adminJobs', JSON.stringify(jobs));
+    }
+
+    function renderJobs() {
+      jobListContainer.innerHTML = '';
+      if (jobs.length === 0) {
+        jobListContainer.innerHTML = '<p>Belum ada pekerjaan yang ditambahkan.</p>';
+        return;
+      }
+
+      jobs.forEach((job, index) => {
+        const div = document.createElement('div');
+        div.className = 'job-item';
+        div.innerHTML = `
+          <strong>${job.title}</strong>
+          <p>${job.description}</p>
+          <p><strong>Deadline:</strong> ${job.deadline}</p>
+          <p><strong>Status:</strong> ${job.status}</p>
+          <div class="job-actions">
+            <button onclick="editJob(${index})">Edit</button>
+            <button class="delete" onclick="deleteJob(${index})">Hapus</button>
+          </div>
+        `;
+        jobListContainer.appendChild(div);
+      });
+    }
+
+    function editJob(index) {
+      const job = jobs[index];
+      document.getElementById('title').value = job.title;
+      document.getElementById('description').value = job.description;
+      document.getElementById('deadline').value = job.deadline;
+      document.getElementById('status').value = job.status;
+      document.getElementById('editIndex').value = index;
+      submitBtn.textContent = "Update Pekerjaan";
+    }
+
+    function deleteJob(index) {
+      if (confirm("Yakin ingin menghapus pekerjaan ini?")) {
+        jobs.splice(index, 1);
+        saveJobs();
+        renderJobs();
+      }
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const newJob = {
+        title: document.getElementById('title').value,
+        description: document.getElementById('description').value,
+        deadline: document.getElementById('deadline').value,
+        status: document.getElementById('status').value
+      };
+      const editIndex = document.getElementById('editIndex').value;
+
+      if (editIndex !== '') {
+        jobs[editIndex] = newJob;
+        submitBtn.textContent = "Tambah Pekerjaan";
+        document.getElementById('editIndex').value = '';
+      } else {
+        jobs.push(newJob);
+      }
+
+      saveJobs();
+      renderJobs();
+      form.reset();
+    });
+
+    renderJobs();
+  </script>
+</body>
+</html>

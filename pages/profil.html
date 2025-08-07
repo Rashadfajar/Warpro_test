@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profil Saya - WARPRO</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9f9f9; }
+    header { background: #2e2e2e; color: white; padding: 1rem; text-align: center; }
+    nav { background: #333; padding: 1rem; display: flex; justify-content: space-between; color: white; }
+    nav a { color: #f39c12; text-decoration: none; margin-right: 1rem; }
+
+    main { max-width: 960px; margin: auto; padding: 2rem; display: flex; flex-wrap: wrap; gap: 2rem; }
+    .profile-section, .form-section {
+      flex: 1 1 300px;
+      background: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .profile-section h2, .form-section h2 {
+      margin-top: 0;
+      color: #2e2e2e;
+    }
+
+    .job-item {
+      background: #f0f0f0;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-left: 5px solid #3498db;
+      border-radius: 6px;
+    }
+
+    input[type="text"], input[type="email"] {
+      width: 100%;
+      padding: 10px;
+      margin: 0.5rem 0 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .cta-button {
+      background: #d35400;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Profil Saya</h1>
+  </header>
+
+  <nav>
+    <div><a href="../index.html">🏠 Beranda</a></div>
+    <div><a href="../pages/login.html" onclick="sessionStorage.clear()">Logout</a></div>
+  </nav>
+
+  <main>
+    <!-- PROFIL -->
+    <section class="profile-section">
+      <h2>Data Pengguna</h2>
+      <p><strong>Nama:</strong> <span id="username">-</span></p>
+      <p><strong>Email:</strong> <span id="user-email">-</span></p>
+
+      <h3 style="margin-top:2rem;">Pekerjaan yang Diambil</h3>
+      <div id="user-jobs"></div>
+    </section>
+
+    <!-- FORM UPDATE -->
+    <section class="form-section">
+      <h2>Perbarui Profil</h2>
+      <form id="updateForm">
+        <label for="name">Nama Lengkap</label>
+        <input type="text" id="name" required />
+        
+        <label for="email">Email</label>
+        <input type="email" id="email" required />
+        
+        <button type="submit" class="cta-button">Simpan Perubahan</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const nameDisplay = document.getElementById('username');
+    const emailDisplay = document.getElementById('user-email');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+
+    const savedName = sessionStorage.getItem('username') || 'Pengguna';
+    const savedEmail = sessionStorage.getItem('email') || '-';
+
+    // Tampilkan data di profil
+    nameDisplay.textContent = savedName;
+    emailDisplay.textContent = savedEmail;
+
+    // Isi ke form
+    nameInput.value = savedName;
+    emailInput.value = savedEmail;
+
+    // Submit form update
+    document.getElementById('updateForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const newName = nameInput.value;
+      const newEmail = emailInput.value;
+
+      sessionStorage.setItem('username', newName);
+      sessionStorage.setItem('email', newEmail);
+
+      nameDisplay.textContent = newName;
+      emailDisplay.textContent = newEmail;
+
+      alert('Profil berhasil diperbarui!');
+    });
+
+    // Load pekerjaan
+    const jobs = JSON.parse(localStorage.getItem('adminJobs')) || [];
+    const currentUser = '@' + savedName;
+    const userJobs = jobs.filter(job => job.worker === currentUser);
+
+    const jobContainer = document.getElementById('user-jobs');
+    if (userJobs.length > 0) {
+      userJobs.forEach(job => {
+        const jobEl = document.createElement('div');
+        jobEl.className = 'job-item';
+        jobEl.innerHTML = `<strong>${job.title}</strong><br>Status: ${job.status}<br>Deadline: ${job.deadline}`;
+        jobContainer.appendChild(jobEl);
+      });
+    } else {
+      jobContainer.innerHTML = '<p>Belum ada pekerjaan yang diambil.</p>';
+    }
+  </script>
+</body>
+</html>
