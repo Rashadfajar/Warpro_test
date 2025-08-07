@@ -207,12 +207,12 @@
           ? filtered
               .map(
                 (job, index) => `
-      <div class="job-card" onclick="handleJobClick(${index})">
-        <h3>${job.title}</h3>
-        <p><strong>Status:</strong> ${job.status}</p>
-        <p><strong>Deadline:</strong> ${job.deadline}</p>
-      </div>
-    `
+                  <div class="job-card" onclick="handleJobClick(${index})">
+                    <h3>${job.title}</h3>
+                    <p><strong>Status:</strong> ${job.status}</p>
+                    <p><strong>Deadline:</strong> ${job.deadline}</p>
+                  </div>
+                `
               )
               .join("")
           : "<p>Tidak ada pekerjaan ditemukan.</p>";
@@ -221,7 +221,7 @@
       function handleJobClick(index) {
         const job = jobs[index];
 
-        if (!isLoggedIn || isAdmin) {
+        if (!isLoggedIn) {
           alert(
             "Silakan login sebagai pengguna untuk melihat atau mengambil pekerjaan."
           );
@@ -235,22 +235,22 @@
         const popup = document.createElement("div");
         popup.className = "popup show";
         popup.innerHTML = `
-      <div class="popup-inner" onclick="event.stopPropagation()">
-        <div class="popup-header">
-          <span class="popup-close" onclick="this.closest('.popup').remove()">&times;</span>
-          <h3>${job.title}</h3>
-        </div>
-        <p><strong>Status:</strong> ${job.status}</p>
-        <p><strong>Deadline:</strong> ${job.deadline}</p>
-        <p><strong>Deskripsi:</strong> ${job.description}</p>
-        <p><strong>Dikerjakan Oleh:</strong> ${job.worker || "-"}</p>
-        ${
-          job.status === "Belum Diambil"
-            ? `<button onclick="ambilJob(${index})" class="cta-button">Ambil Job Ini</button>`
-            : ""
-        }
-      </div>
-    `;
+          <div class="popup-inner" onclick="event.stopPropagation()">
+            <div class="popup-header">
+              <span class="popup-close" onclick="this.closest('.popup').remove()">&times;</span>
+              <h3>${job.title}</h3>
+            </div>
+            <p><strong>Status:</strong> ${job.status}</p>
+            <p><strong>Deadline:</strong> ${job.deadline}</p>
+            <p><strong>Deskripsi:</strong> ${job.description}</p>
+            <p><strong>Dikerjakan Oleh:</strong> ${job.worker || "-"}</p>
+            ${
+              job.status === "Belum Diambil"
+                ? `<button onclick="ambilJob(${index})" class="cta-button">Ambil Job Ini</button>`
+                : ""
+            }
+          </div>
+        `;
         popup.addEventListener("click", () => popup.remove());
         document.body.appendChild(popup);
       }
