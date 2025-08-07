@@ -1,172 +1,240 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WARPRO - Warkop Meets Professional</title>
-  <link rel="stylesheet" href="css/style.css">
-  <script defer src="js/main.js"></script>
-  <style>
-    .job-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    .job-card {
-      background: #fff;
-      border-left: 5px solid #2980b9;
-      border-radius: 8px;
-      padding: 1rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      transition: transform 0.2s;
-      cursor: pointer;
-    }
-    .job-card:hover {
-      transform: scale(1.02);
-    }
-    .job-card h3 { margin-top: 0; font-size: 1.1rem; }
-    .job-card p { margin: 0.5rem 0; font-size: 0.9rem; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WARPRO - Warkop Meets Professional</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <script defer src="js/main.js"></script>
+    <style>
+      .job-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      .job-card {
+        background: #fff;
+        border-left: 5px solid #2980b9;
+        border-radius: 8px;
+        padding: 1rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+        cursor: pointer;
+      }
+      .job-card:hover {
+        transform: scale(1.02);
+      }
+      .job-card h3 {
+        margin-top: 0;
+        font-size: 1.1rem;
+      }
+      .job-card p {
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+      }
 
-    .popup {
-      display: none;
-      position: fixed;
-      z-index: 999;
-      background: #fff;
-      padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 90%; max-width: 400px;
-    }
-    .popup.show { display: block; }
-    .popup-header { font-weight: bold; margin-bottom: 1rem; }
-    .popup-close { float: right; cursor: pointer; color: red; font-size: 18px; }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>WARPRO</h1>
-    <p>Warkop Meets Professional - Komunitas Freelance Berbasis Warung</p>
-  </header>
-  <nav>
-    <div>
-      <a href="#tentang">Tentang</a>
-      <a href="#job-board">Job Board</a>
-      <a href="#komunitas">Komunitas</a>
-      <a href="#rangking">Ranking</a>
-      <!-- <a href="#status-customer">Status Customer</a> -->
-    </div>
-    <div id="user-nav">
-      <a href="pages/login.html">Masuk</a>
-    </div>
-  </nav>
-  <main>
-    <section id="tentang">
-      <h2>Tentang WARPRO</h2>
-      <p>WARPRO menghubungkan pelanggan warung kopi/mie dengan job freelance melalui sistem loyalitas. Akses pekerjaan setelah login dan gabung komunitas.</p>
-    </section>
-
-    <section id="job-board">
-      <h2>Job Board</h2>
-      <input type="text" id="jobSearch" placeholder="Cari pekerjaan...">
-      <select id="statusFilter">
-        <option value="">Semua Status</option>
-        <option value="Belum Diambil">Belum Diambil</option>
-        <option value="Sedang Berjalan">Sedang Berjalan</option>
-        <option value="Selesai">Selesai</option>
-      </select>
-      <div class="job-grid" id="jobGrid"></div>
-      <div id="job-popup" class="popup">
-        <div class="popup-header">
-          <span class="popup-close" onclick="hidePopup()">&times;</span>
-          Detail Pekerjaan
-        </div>
-        <div id="popup-content"></div>
+      .popup {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        background: #fff;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 400px;
+      }
+      .popup.show {
+        display: block;
+      }
+      .popup-header {
+        font-weight: bold;
+        margin-bottom: 1rem;
+      }
+      .popup-close {
+        float: right;
+        cursor: pointer;
+        color: red;
+        font-size: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>WARPRO</h1>
+      <p>Warkop Meets Professional - Komunitas Freelance Berbasis Warung</p>
+    </header>
+    <nav>
+      <div>
+        <a href="#tentang">Tentang</a>
+        <a href="#job-board">Job Board</a>
+        <a href="#komunitas">Komunitas</a>
+        <a href="#rangking">Ranking</a>
+        <!-- <a href="#status-customer">Status Customer</a> -->
       </div>
-    </section>
+      <div id="user-nav">
+        <a href="pages/login.html">Masuk</a>
+      </div>
+    </nav>
+    <main>
+      <section id="tentang">
+        <h2>Tentang WARPRO</h2>
+        <p>
+          WARPRO menghubungkan pelanggan warung kopi/mie dengan job freelance
+          melalui sistem loyalitas. Akses pekerjaan setelah login dan gabung
+          komunitas.
+        </p>
+      </section>
 
-    <section id="rangking">
-      <h2>Top 5 Pekerja Terbaik</h2>
-      <table>
-        <thead>
-          <tr><th>Ranking</th><th>Nama</th><th>Skor</th><th>Jumlah Proyek</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>1</td><td>@dewi_marketing</td><td>98</td><td>12</td></tr>
-          <tr><td>2</td><td>@rizki_design</td><td>91</td><td>10</td></tr>
-          <tr><td>3</td><td>@arya_edit</td><td>87</td><td>9</td></tr>
-          <tr><td>4</td><td>@lia_uiux</td><td>85</td><td>8</td></tr>
-          <tr><td>5</td><td>@fajarweb</td><td>82</td><td>8</td></tr>
-        </tbody>
-      </table>
-    </section>
+      <section id="job-board">
+        <h2>Job Board</h2>
+        <input type="text" id="jobSearch" placeholder="Cari pekerjaan..." />
+        <select id="statusFilter">
+          <option value="">Semua Status</option>
+          <option value="Belum Diambil">Belum Diambil</option>
+          <option value="Sedang Berjalan">Sedang Berjalan</option>
+          <option value="Selesai">Selesai</option>
+        </select>
+        <div class="job-grid" id="jobGrid"></div>
+        <div id="job-popup" class="popup">
+          <div class="popup-header">
+            <span class="popup-close" onclick="hidePopup()">&times;</span>
+            Detail Pekerjaan
+          </div>
+          <div id="popup-content"></div>
+        </div>
+      </section>
 
-    <section id="komunitas">
-      <h2>Komunitas WARPRO</h2>
-      <p>Gabung komunitas untuk akses job eksklusif dan pasang pekerjaan melalui admin.</p>
-      <button class="cta-button">Gabung Komunitas</button>
-    </section>
-  </main>
+      <section id="rangking">
+        <h2>Top 5 Pekerja Terbaik</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Ranking</th>
+              <th>Nama</th>
+              <th>Skor</th>
+              <th>Jumlah Proyek</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>@dewi_marketing</td>
+              <td>98</td>
+              <td>12</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>@rizki_design</td>
+              <td>91</td>
+              <td>10</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>@arya_edit</td>
+              <td>87</td>
+              <td>9</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>@lia_uiux</td>
+              <td>85</td>
+              <td>8</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>@fajarweb</td>
+              <td>82</td>
+              <td>8</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-  <footer>
-    <p>&copy; 2025 WARPRO. All rights reserved.</p>
-    <p><a href="#">Kebijakan Privasi</a> | <a href="#">Syarat & Ketentuan</a></p>
-  </footer>
+      <section id="komunitas">
+        <h2>Komunitas WARPRO</h2>
+        <p>
+          Gabung komunitas untuk akses job eksklusif dan pasang pekerjaan
+          melalui admin.
+        </p>
+        <button class="cta-button">Gabung Komunitas</button>
+      </section>
+    </main>
 
-<script>
-  const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
-  const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
-  const username = sessionStorage.getItem('username') || '';
-  const navDiv = document.getElementById('user-nav');
+    <footer>
+      <p>&copy; 2025 WARPRO. All rights reserved.</p>
+      <p>
+        <a href="#">Kebijakan Privasi</a> | <a href="#">Syarat & Ketentuan</a>
+      </p>
+    </footer>
 
-  if (isLoggedIn) {
-    navDiv.innerHTML = isAdmin
-      ? '<a href="pages/admin.html">Admin</a> | <a href="pages/login.html" onclick="sessionStorage.clear()">Logout</a>'
-      : '<a href="pages/profil.html">Profil</a> | <a href="pages/login.html" onclick="sessionStorage.clear()">Logout</a>';
-  }
+    <script>
+      const isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true";
+      const isAdmin = sessionStorage.getItem("isAdmin") === "true";
+      const username = sessionStorage.getItem("username") || "";
+      const navDiv = document.getElementById("user-nav");
 
-  let jobs = JSON.parse(localStorage.getItem('adminJobs')) || [];
+      if (isLoggedIn) {
+        navDiv.innerHTML = isAdmin
+          ? '<a href="pages/admin.html">Admin</a> | <a href="pages/login.html" onclick="sessionStorage.clear()">Logout</a>'
+          : '<a href="pages/profil.html">Profil</a> | <a href="pages/login.html" onclick="sessionStorage.clear()">Logout</a>';
+      }
 
-  function saveJobs() {
-    localStorage.setItem('adminJobs', JSON.stringify(jobs));
-  }
+      let jobs = JSON.parse(localStorage.getItem("adminJobs")) || [];
 
-  function renderJobs() {
-    const jobGrid = document.getElementById('jobGrid');
-    const keyword = document.getElementById('jobSearch').value.toLowerCase();
-    const status = document.getElementById('statusFilter').value;
+      function saveJobs() {
+        localStorage.setItem("adminJobs", JSON.stringify(jobs));
+      }
 
-    const filtered = jobs.filter(job =>
-      job.title.toLowerCase().includes(keyword) &&
-      (status === '' || job.status === status)
-    );
+      function renderJobs() {
+        const jobGrid = document.getElementById("jobGrid");
+        const keyword = document
+          .getElementById("jobSearch")
+          .value.toLowerCase();
+        const status = document.getElementById("statusFilter").value;
 
-    jobGrid.innerHTML = filtered.length ? filtered.map((job, index) => `
+        const filtered = jobs.filter(
+          (job) =>
+            job.title.toLowerCase().includes(keyword) &&
+            (status === "" || job.status === status)
+        );
+
+        jobGrid.innerHTML = filtered.length
+          ? filtered
+              .map(
+                (job, index) => `
       <div class="job-card" onclick="handleJobClick(${index})">
         <h3>${job.title}</h3>
         <p><strong>Status:</strong> ${job.status}</p>
         <p><strong>Deadline:</strong> ${job.deadline}</p>
       </div>
-    `).join('') : '<p>Tidak ada pekerjaan ditemukan.</p>';
-  }
+    `
+              )
+              .join("")
+          : "<p>Tidak ada pekerjaan ditemukan.</p>";
+      }
 
-  function handleJobClick(index) {
-    const job = jobs[index];
+      function handleJobClick(index) {
+        const job = jobs[index];
 
-    if (!isLoggedIn || isAdmin) {
-      alert('Silakan login sebagai pengguna untuk melihat atau mengambil pekerjaan.');
-      return;
-    }
+        if (!isLoggedIn || isAdmin) {
+          alert(
+            "Silakan login sebagai pengguna untuk melihat atau mengambil pekerjaan."
+          );
+          return;
+        }
 
-    // Hapus popup sebelumnya jika ada
-    const existingPopup = document.querySelector('.popup');
-    if (existingPopup) existingPopup.remove();
+        // Hapus popup sebelumnya jika ada
+        const existingPopup = document.querySelector(".popup");
+        if (existingPopup) existingPopup.remove();
 
-    const popup = document.createElement('div');
-    popup.className = 'popup show';
-    popup.innerHTML = `
+        const popup = document.createElement("div");
+        popup.className = "popup show";
+        popup.innerHTML = `
       <div class="popup-inner" onclick="event.stopPropagation()">
         <div class="popup-header">
           <span class="popup-close" onclick="this.closest('.popup').remove()">&times;</span>
@@ -175,29 +243,35 @@
         <p><strong>Status:</strong> ${job.status}</p>
         <p><strong>Deadline:</strong> ${job.deadline}</p>
         <p><strong>Deskripsi:</strong> ${job.description}</p>
-        <p><strong>Dikerjakan Oleh:</strong> ${job.worker || '-'}</p>
-        ${job.status === 'Belum Diambil' ? `<button onclick="ambilJob(${index})" class="cta-button">Ambil Job Ini</button>` : ''}
+        <p><strong>Dikerjakan Oleh:</strong> ${job.worker || "-"}</p>
+        ${
+          job.status === "Belum Diambil"
+            ? `<button onclick="ambilJob(${index})" class="cta-button">Ambil Job Ini</button>`
+            : ""
+        }
       </div>
     `;
-    popup.addEventListener('click', () => popup.remove());
-    document.body.appendChild(popup);
-  }
+        popup.addEventListener("click", () => popup.remove());
+        document.body.appendChild(popup);
+      }
 
+      function ambilJob(index) {
+        jobs[index].status = "Sedang Berjalan";
+        jobs[index].worker = "@" + username;
+        saveJobs();
+        document.querySelector(".popup")?.remove();
+        renderJobs();
+        alert("Job berhasil diambil!");
+      }
 
-  function ambilJob(index) {
-    jobs[index].status = 'Sedang Berjalan';
-    jobs[index].worker = '@' + username;
-    saveJobs();
-    document.querySelector('.popup')?.remove();
-    renderJobs();
-    alert('Job berhasil diambil!');
-  }
+      document
+        .getElementById("jobSearch")
+        .addEventListener("input", renderJobs);
+      document
+        .getElementById("statusFilter")
+        .addEventListener("change", renderJobs);
 
-  document.getElementById('jobSearch').addEventListener('input', renderJobs);
-  document.getElementById('statusFilter').addEventListener('change', renderJobs);
-
-  renderJobs();
-</script>
-
-</body>
+      renderJobs();
+    </script>
+  </body>
 </html>

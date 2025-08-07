@@ -2,46 +2,130 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Login - WARPRO</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f0f0f0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-    .login-container { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 300px; }
-    h2 { text-align: center; margin-bottom: 1.5rem; }
-    input[type="text"], input[type="password"] {
-      width: 100%; padding: 0.75rem; margin-bottom: 1rem; border-radius: 5px; border: 1px solid #ccc;
+    :root { --accent:#d35400; --bg:#f4f4f4; --card:#ffffff; --text:#2e2e2e;}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:16px}
+    .wrap{width:100%;max-width:380px;background:var(--card);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.08);padding:24px}
+    h1{margin:0 0 8px;color:var(--text);text-align:center;font-size:1.5rem}
+    p.sub{margin:0 0 20px;color:#666;text-align:center;font-size:.92rem}
+    label{display:block;margin:10px 0 6px;color:#444;font-weight:600}
+    input[type="text"],input[type="password"],input[type="email"]{
+      width:100%;padding:12px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none
     }
-    button { width: 100%; background: #d35400; color: white; border: none; padding: 0.75rem; border-radius: 5px; cursor: pointer; }
-    .error { color: red; text-align: center; margin-top: 1rem; }
+    .row{display:flex;gap:10px}
+    .row > div{flex:1}
+    .field{position:relative}
+    .toggle{
+      position:absolute;right:10px;top:50%;transform:translateY(-50%);
+      background:none;border:none;cursor:pointer;font-size:.9rem;color:#777;padding:2px 6px
+    }
+    .fx{display:flex;align-items:center;justify-content:space-between;margin:8px 0 14px}
+    .fx label.chk{display:flex;align-items:center;gap:8px;font-weight:500;color:#555;cursor:pointer}
+    .fx a{color:var(--accent);text-decoration:none;font-size:.9rem}
+    button.cta{
+      width:100%;padding:12px 14px;background:var(--accent);color:#fff;border:none;border-radius:8px;
+      cursor:pointer;font-weight:700;letter-spacing:.2px;margin-top:6px
+    }
+    button.cta:hover{filter:brightness(.95)}
+    .err{color:#c0392b;background:#fdecea;border:1px solid #f5c2c7;padding:10px;border-radius:8px;margin:10px 0;display:none}
+    .hint{margin-top:14px;color:#777;font-size:.85rem}
+    .navtop{position:fixed;left:12px;top:12px}
+    .navtop a{color:var(--accent);text-decoration:none;font-weight:600}
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <h2>Login WARPRO</h2>
-    <input type="text" id="username" placeholder="Username" />
-    <input type="password" id="password" placeholder="Password" />
-    <button onclick="login()">Masuk</button>
-    <div class="error" id="errorMsg"></div>
+  <div class="navtop"><a href="../index.html">← Kembali ke Beranda</a></div>
+
+  <div class="wrap">
+    <h1>Login WARPRO</h1>
+    <p class="sub">Gunakan akun resmi dari kami untuk masuk.</p>
+
+    <div class="err" id="errBox">Username atau password salah.</div>
+
+    <label for="username">Username</label>
+    <input id="username" type="text" placeholder="username" autocomplete="username" />
+
+    <label for="password">Password</label>
+    <div class="field">
+      <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
+      <!-- <button class="toggle" type="button" id="togglePw">Lihat</button> -->
+    </div>
+
+    <div class="fx">
+      <label class="chk">
+        <input id="remember" type="checkbox" /> Ingat saya
+      </label>
+      <a href="#" onclick="alert('Hubungi admin WARPRO untuk reset kata sandi.');return false;">Lupa sandi?</a>
+    </div>
+
+    <button class="cta" id="btnLogin">Masuk</button>
   </div>
 
   <script>
-    function login() {
-      const user = document.getElementById('username').value;
-      const pass = document.getElementById('password').value;
-      const errorMsg = document.getElementById('errorMsg');
-
-      if (user === 'admin' && pass === 'admin123') {
-        sessionStorage.setItem('isLoggedIn', 'true');
-        sessionStorage.setItem('isAdmin', 'true');
-        window.location.href = 'admin.html';
-      } else if (user === 'rashad' && pass === '1234') {
-        sessionStorage.setItem('isLoggedIn', 'true');
-        sessionStorage.setItem('isAdmin', 'false');
-        window.location.href = 'profil.html';
-      } else {
-        errorMsg.textContent = 'Username atau password salah.';
+    // Jika sudah login, arahkan sesuai peran
+    (function redirectIfLoggedIn(){
+      const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+      const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
+      if(isLoggedIn){
+        window.location.href = isAdmin ? 'admin.html' : 'profil.html';
       }
+    })();
+
+    const $ = (id)=>document.getElementById(id);
+    const errBox = $('errBox');
+    const u = $('username');
+    const p = $('password');
+    const remember = $('remember');
+
+    // Restore username kalau "ingat saya"
+    (function restoreRemembered(){
+      const rememberedUser = localStorage.getItem('rememberedUser');
+      if(rememberedUser){
+        u.value = rememberedUser;
+        remember.checked = true;
+      }
+    })();
+
+    function doLogin(){
+      const user = u.value.trim();
+      const pass = p.value;
+
+      // Reset error
+      errBox.style.display = 'none';
+
+      // Demo auth (hardcoded)
+      if(user === 'admin' && pass === 'admin123'){
+        sessionStorage.setItem('isLoggedIn','true');
+        sessionStorage.setItem('isAdmin','true');
+        sessionStorage.setItem('username','admin');
+        sessionStorage.setItem('email','admin@warpro.local');
+        if(remember.checked){ localStorage.setItem('rememberedUser', user); } else { localStorage.removeItem('rememberedUser'); }
+        window.location.href = 'admin.html';
+        return;
+      }
+      if(user === 'rashad' && pass === '1234'){
+        sessionStorage.setItem('isLoggedIn','true');
+        sessionStorage.setItem('isAdmin','false');
+        sessionStorage.setItem('username','rashad');
+        sessionStorage.setItem('email','rashad@example.com');
+        if(remember.checked){ localStorage.setItem('rememberedUser', user); } else { localStorage.removeItem('rememberedUser'); }
+        window.location.href = 'profil.html';
+        return;
+      }
+
+      // Jika gagal
+      errBox.textContent = 'Username atau password salah.';
+      errBox.style.display = 'block';
     }
+
+    $('btnLogin').addEventListener('click', doLogin);
+    // Enter untuk submit
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter') doLogin();
+    });
   </script>
 </body>
 </html>
