@@ -2,138 +2,339 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Profil Saya - WARPRO</title>
-  <link rel="stylesheet" href="../assets/css/style.css" />
+  <script src="../js/warpro.js" defer></script>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9f9f9; }
-    header { background: #2e2e2e; color: white; padding: 1rem; text-align: center; }
-    nav { background: #333; padding: 1rem; display: flex; justify-content: space-between; color: white; }
-    nav a { color: #f39c12; text-decoration: none; margin-right: 1rem; }
+    :root{
+      --bg:#f7f7f8;--card:#fff;--text:#1f2937;--muted:#6b7280;--line:#e5e7eb;--accent:#d35400;
+      --ok:#27ae60;--warn:#e67e22;--bad:#c0392b;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
 
-    main { max-width: 960px; margin: auto; padding: 2rem; display: flex; flex-wrap: wrap; gap: 2rem; }
-    .profile-section, .form-section {
-      flex: 1 1 300px;
-      background: white;
-      padding: 1.5rem;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    /* Header / Nav */
+    header{background:#2e2e2e;color:#fff;padding:.85rem}
+    header .wrap{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between}
+    .topnav{display:flex;align-items:center;gap:.5rem}
+    .topnav .navlink{
+      display:inline-flex; align-items:center; gap:.45rem;
+      color:#f39c12; text-decoration:none;
+      padding:.35rem .65rem; border-radius:8px;
+      transition:background .15s ease, color .15s ease, border-color .15s ease;
+    }
+    .topnav .navlink .icon{line-height:1; font-size:1.05rem; transform:translateY(1px)}
+    .topnav .navlink:hover{background:rgba(243,156,18,.16)}
+    .topnav .nav-logout{ color:#ffd7c7; border:1px solid rgba(255,255,255,.22); background:transparent; }
+    .topnav .nav-logout:hover{ background:rgba(192,57,43,.28); color:#fff; border-color:rgba(192,57,43,.55); }
+    @media (max-width:520px){
+      header{padding:.7rem}
+      .topnav{gap:.35rem}
+      .topnav .navlink{padding:.3rem .5rem}
     }
 
-    .profile-section h2, .form-section h2 {
-      margin-top: 0;
-      color: #2e2e2e;
-    }
+    /* Layout */
+    main{max-width:1100px;margin:auto;padding:1rem;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    @media (max-width:900px){ main{grid-template-columns:1fr} }
 
-    .job-item {
-      background: #f0f0f0;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border-left: 5px solid #3498db;
-      border-radius: 6px;
-    }
+    .card{background:var(--card);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.06);padding:16px}
+    .card h2{margin:.2rem 0 1rem}
+    .muted{color:var(--muted)}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
 
-    input[type="text"], input[type="email"] {
-      width: 100%;
-      padding: 10px;
-      margin: 0.5rem 0 1rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
+    .btn{background:#e5e7eb;border:none;border-radius:10px;padding:10px 12px;cursor:pointer}
+    .btn.primary{background:var(--accent);color:#fff}
+    .btn.warn{background:#f59e0b;color:#111}
+    .btn.bad{background:var(--bad);color:#fff}
 
-    .cta-button {
-      background: #d35400;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+    .chip{background:#f4f6f9;border:1px solid #e5eaf0;border-radius:999px;padding:4px 8px;color:#3b4859;font-size:.85rem}
+    .job{border:1px solid var(--line);border-left:6px solid #7f8c8d;border-radius:12px;padding:12px 14px;background:#fff;margin:.6rem 0;cursor:pointer}
+    .job h3{margin:.2rem 0 .3rem;font-size:1.05rem}
+    .status-badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:.8rem;color:#fff}
+    .s-belum{background:#c0392b}
+    .s-berjalan{background:#e67e22}
+    .s-selesai{background:#27ae60}
+
+    /* Modal */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.45);z-index:50;padding:16px}
+    .modal.show{display:flex}
+    .modal .panel{background:#fff;border-radius:14px;max-width:520px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+    .modal header{display:flex;align-items:center;justify-content:space-between;background:#fff;color:#111;padding:14px 16px;border-bottom:1px solid var(--line)}
+    .modal header h3{margin:0;font-size:1.05rem}
+    .modal .body{padding:16px}
+    .modal .foot{padding:12px 16px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end}
+    label{display:block;margin:.4rem 0 .3rem;font-weight:600}
+    input[type="text"],input[type="email"],input[type="password"]{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px}
+
+    .error{background:#ffecec;border:1px solid #ffb4b4;color:#8a2323;border-radius:10px;padding:10px;margin:.5rem 0;display:none}
+    .success{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;border-radius:10px;padding:10px;margin:.5rem 0;display:none}
   </style>
 </head>
 <body>
   <header>
-    <h1>Profil Saya</h1>
+    <div class="wrap">
+      <div class="brand"><strong>Profil WARPRO</strong></div>
+      <nav class="topnav">
+        <a class="navlink" href="../index.html"><span class="icon">🏠</span><span>Beranda</span></a>
+        <a class="navlink nav-logout" href="login.html" onclick="logout();return false;"><span class="icon">↩</span><span>Keluar</span></a>
+      </nav>
+    </div>
   </header>
 
-  <nav>
-    <div><a href="../index.html">🏠 Beranda</a></div>
-    <div><a href="../pages/login.html" onclick="sessionStorage.clear()">Logout</a></div>
-  </nav>
-
   <main>
-    <!-- PROFIL -->
-    <section class="profile-section">
+    <!-- Ringkasan Profil & Jobs -->
+    <section class="card">
       <h2>Data Pengguna</h2>
-      <p><strong>Nama:</strong> <span id="username">-</span></p>
-      <p><strong>Email:</strong> <span id="user-email">-</span></p>
+      <div class="row" style="gap:24px;flex-wrap:wrap;margin-bottom:6px">
+        <div style="min-width:220px">
+          <div class="muted">Nama</div>
+          <div id="dspName" style="font-weight:600">-</div>
+        </div>
+        <div style="min-width:220px">
+          <div class="muted">Username</div>
+          <div id="dspUser">@-</div>
+        </div>
+        <div style="min-width:220px">
+          <div class="muted">Email</div>
+          <div id="dspEmail">-</div>
+        </div>
+      </div>
 
-      <h3 style="margin-top:2rem;">Pekerjaan yang Diambil</h3>
-      <div id="user-jobs"></div>
+      <div class="row" style="margin:.5rem 0 0">
+        <button id="btnEditProfile" class="btn">Edit Profil</button>
+        <button id="btnChangeUser" class="btn">Ganti Username</button>
+        <button id="btnChangePass" class="btn">Ganti Password</button>
+      </div>
+
+      <h3 style="margin:1.2rem 0 .6rem">Pekerjaan yang Diambil</h3>
+      <div id="jobsBox"><p class="muted">Sedang memuat…</p></div>
     </section>
 
-    <!-- FORM UPDATE -->
-    <section class="form-section">
-      <h2>Perbarui Profil</h2>
-      <form id="updateForm">
-        <label for="name">Nama Lengkap</label>
-        <input type="text" id="name" required />
-        
-        <label for="email">Email</label>
-        <input type="email" id="email" required />
-        
-        <button type="submit" class="cta-button">Simpan Perubahan</button>
-      </form>
+    <!-- Panel info / notifikasi -->
+    <section class="card">
+      <h2>Tips Keamanan</h2>
+      <p class="muted" style="margin-top:-6px">
+        • Jangan bagikan password ke siapa pun.<br>
+        • Ganti password secara berkala.<br>
+        • Gunakan username yang mudah dikenali klien.
+      </p>
+      <div id="flashOk" class="success"></div>
+      <div id="flashErr" class="error"></div>
     </section>
   </main>
 
+  <!-- Modal umum -->
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="panel">
+      <header>
+        <h3 id="modalTitle">Aksi</h3>
+        <button class="btn" onclick="closeModal()">✕</button>
+      </header>
+      <div class="body" id="modalBody"></div>
+      <div class="foot" id="modalFoot"></div>
+    </div>
+  </div>
+
   <script>
-    const nameDisplay = document.getElementById('username');
-    const emailDisplay = document.getElementById('user-email');
-    const nameInput = document.getElementById('name');
-    const emailInput = document.getElementById('email');
+    /* ===== Helpers ===== */
+    const fmtDate = (v)=>{ if(!v) return '-'; const s=String(v); return s.includes('T')? s.split('T')[0] : s; };
+    const statusColor = (s)=> s==='Belum Diambil'?'#c0392b': s==='Sedang Berjalan'?'#e67e22': s==='Selesai'?'#27ae60':'#7f8c8d';
+    const statusClass = (s)=> s==='Belum Diambil'?'s-belum': s==='Sedang Berjalan'?'s-berjalan': s==='Selesai'?'s-selesai':'';
+    const showFlash = (ok,msg)=>{ const el=ok?document.getElementById('flashOk'):document.getElementById('flashErr'); el.textContent=msg; el.style.display='block'; setTimeout(()=>el.style.display='none',4000); };
+    const showErr = (id,msg)=>{ const el=document.getElementById(id); if(!el) return; el.textContent=msg; el.style.display='block'; };
 
-    const savedName = sessionStorage.getItem('username') || 'Pengguna';
-    const savedEmail = sessionStorage.getItem('email') || '-';
+    function openModal(title, bodyHTML, footHTML){
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalBody').innerHTML = bodyHTML;
+      document.getElementById('modalFoot').innerHTML = footHTML;
+      document.getElementById('modal').classList.add('show');
+    }
+    function closeModal(){ document.getElementById('modal').classList.remove('show'); }
+    // tutup modal via overlay & ESC
+    document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-    // Tampilkan data di profil
-    nameDisplay.textContent = savedName;
-    emailDisplay.textContent = savedEmail;
+    /* ===== Boot & Auth ===== */
+    document.addEventListener('DOMContentLoaded', async ()=>{
+      if (!window.WARPRO_API) { alert('Core belum termuat'); return; }
+      const { requireLogin, isAdmin, apiCall, sanitize, escapeAttr } = WARPRO_API;
 
-    // Isi ke form
-    nameInput.value = savedName;
-    emailInput.value = savedEmail;
+      if (!requireLogin()) return;
+      if (isAdmin()) { window.location.href = 'admin.html'; return; }
 
-    // Submit form update
-    document.getElementById('updateForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const newName = nameInput.value;
-      const newEmail = emailInput.value;
+      const username = WARPRO_API.currentUser();
 
-      sessionStorage.setItem('username', newName);
-      sessionStorage.setItem('email', newEmail);
+      // Prefill dari session
+      document.getElementById('dspName').textContent  = sessionStorage.getItem('displayName') || username || '-';
+      document.getElementById('dspUser').textContent  = '@' + (username || '-');
+      document.getElementById('dspEmail').textContent = sessionStorage.getItem('email') || '-';
 
-      nameDisplay.textContent = newName;
-      emailDisplay.textContent = newEmail;
+      // Ambil profil aktual
+      try{
+        const r = await fetch(`${window.API_BASE}?action=getProfile&username=${encodeURIComponent(username)}&ts=${Date.now()}`);
+        const j = await r.json();
+        const u = (j && j.data && j.data.user) || j.user;
+        if (u){
+          sessionStorage.setItem('displayName', u.displayName || u.username);
+          sessionStorage.setItem('email', u.email || '');
+          document.getElementById('dspName').textContent  = u.displayName || u.username || '-';
+          document.getElementById('dspEmail').textContent = u.email || '-';
+        }
+      }catch(_){}
 
-      alert('Profil berhasil diperbarui!');
+      // Muat jobs user
+      loadUserJobs(username);
+
+      // Bind fitur modal
+      document.getElementById('btnEditProfile').addEventListener('click', ()=> openEditProfile());
+      document.getElementById('btnChangeUser').addEventListener('click', ()=> openChangeUsername());
+      document.getElementById('btnChangePass').addEventListener('click', ()=> openChangePassword());
+
+      /* === Edit Profil === */
+      function openEditProfile(){
+        const curName  = sessionStorage.getItem('displayName') || username;
+        const curEmail = sessionStorage.getItem('email') || '';
+        openModal('Edit Profil',
+          `
+            <div id="errEP" class="error"></div>
+            <label>Nama Lengkap</label>
+            <input id="epName" type="text" value="${(curName||'').replace(/"/g,'&quot;')}">
+            <label style="margin-top:.5rem">Email</label>
+            <input id="epEmail" type="email" value="${(curEmail||'').replace(/"/g,'&quot;')}">
+          `,
+          `
+            <button class="btn" onclick="closeModal()">Batal</button>
+            <button id="epSave" class="btn primary">Simpan</button>
+          `
+        );
+        document.getElementById('epSave').addEventListener('click', async ()=>{
+          const name  = document.getElementById('epName').value.trim();
+          const email = document.getElementById('epEmail').value.trim();
+          if(!name || !email){ showErr('errEP','Nama & email wajib diisi.'); return; }
+          try{
+            await apiCall('updateProfile', { username, displayName:name, email });
+            sessionStorage.setItem('displayName', name);
+            sessionStorage.setItem('email', email);
+            document.getElementById('dspName').textContent  = name;
+            document.getElementById('dspEmail').textContent = email;
+            closeModal();
+            showFlash(true,'Profil diperbarui.');
+          }catch(e){ showErr('errEP', e.message||'Gagal menyimpan.'); }
+        });
+      }
+
+      /* === Ganti Username === */
+      function openChangeUsername(){
+        openModal('Ganti Username',
+          `
+            <div id="errCU" class="error"></div>
+            <label>Username Baru</label>
+            <input id="cuNew" type="text" placeholder="min. 3 karakter, a-z 0-9 . _ -">
+            <label style="margin-top:.5rem">Password Saat Ini</label>
+            <input id="cuPass" type="password" placeholder="password saat ini">
+          `,
+          `
+            <button class="btn" onclick="closeModal()">Batal</button>
+            <button id="cuSave" class="btn primary">Ganti Username</button>
+          `
+        );
+        document.getElementById('cuSave').addEventListener('click', async ()=>{
+          const newU = document.getElementById('cuNew').value.trim();
+          const pw   = document.getElementById('cuPass').value;
+          if(!newU || !pw){ showErr('errCU','Semua field wajib diisi.'); return; }
+          try{
+            await apiCall('changeUsername',{ username, password:pw, newUsername:newU });
+            sessionStorage.setItem('username', newU);
+            document.getElementById('dspUser').textContent = '@' + newU;
+            closeModal();
+            showFlash(true, 'Username diganti ke @'+newU);
+          }catch(e){ showErr('errCU', e.message||'Gagal ganti username.'); }
+        });
+      }
+
+      /* === Ganti Password === */
+      function openChangePassword(){
+        openModal('Ganti Password',
+          `
+            <div id="errCP" class="error"></div>
+            <div class="muted" style="margin-bottom:.4rem">Password minimal 6 karakter.</div>
+            <label>Password Lama</label>
+            <input id="cpOld" type="password">
+            <label style="margin-top:.5rem">Password Baru</label>
+            <input id="cpNew" type="password">
+            <label style="margin-top:.5rem">Ulangi Password Baru</label>
+            <input id="cpNew2" type="password">
+          `,
+          `
+            <button class="btn" onclick="closeModal()">Batal</button>
+            <button id="cpSave" class="btn primary">Ganti Password</button>
+          `
+        );
+        document.getElementById('cpSave').addEventListener('click', async ()=>{
+          const oldP = document.getElementById('cpOld').value;
+          const np1  = document.getElementById('cpNew').value;
+          const np2  = document.getElementById('cpNew2').value;
+          if(!oldP || !np1 || !np2){ showErr('errCP','Semua field wajib diisi.'); return; }
+          if(np1 !== np2){ showErr('errCP','Konfirmasi password baru tidak sama.'); return; }
+          if(np1.length < 6){ showErr('errCP','Password minimal 6 karakter.'); return; }
+          try{
+            await apiCall('changePassword',{ username, oldPassword:oldP, newPassword:np1 });
+            closeModal();
+            showFlash(true,'Password berhasil diganti.');
+          }catch(e){ showErr('errCP', e.message||'Gagal ganti password.'); }
+        });
+      }
     });
 
-    // Load pekerjaan
-    const jobs = JSON.parse(localStorage.getItem('adminJobs')) || [];
-    const currentUser = '@' + savedName;
-    const userJobs = jobs.filter(job => job.worker === currentUser);
+    /* ===== Jobs milik user ===== */
+    async function loadUserJobs(username){
+      const box = document.getElementById('jobsBox');
+      box.innerHTML = '<p class="muted">Sedang memuat…</p>';
+      try{
+        const r = await fetch(`${window.API_BASE}?action=getJobs&ts=${Date.now()}`);
+        const j = await r.json();
+        const rows = (j && j.data && Array.isArray(j.data.jobs)) ? j.data.jobs : (Array.isArray(j.jobs) ? j.jobs : []);
+        const me = '@' + username.toLowerCase().trim();
+        const mine = rows.filter(job => String(job.worker||'').trim().toLowerCase() === me);
 
-    const jobContainer = document.getElementById('user-jobs');
-    if (userJobs.length > 0) {
-      userJobs.forEach(job => {
-        const jobEl = document.createElement('div');
-        jobEl.className = 'job-item';
-        jobEl.innerHTML = `<strong>${job.title}</strong><br>Status: ${job.status}<br>Deadline: ${job.deadline}`;
-        jobContainer.appendChild(jobEl);
-      });
-    } else {
-      jobContainer.innerHTML = '<p>Belum ada pekerjaan yang diambil.</p>';
+        if (!mine.length){ box.innerHTML = '<p class="muted">Belum ada pekerjaan diambil.</p>'; return; }
+
+        // render tanpa inline onclick
+        box.innerHTML = mine.map((job, i) => `
+          <article class="job" data-i="${i}" style="border-left-color:${statusColor(job.status)}">
+            <h3>${WARPRO_API.sanitize(job.title || '-')}</h3>
+            <div class="row" style="gap:8px">
+              <span class="status-badge ${statusClass(job.status)}">${WARPRO_API.sanitize(job.status)}</span>
+              <span class="chip">Deadline: ${WARPRO_API.sanitize(fmtDate(job.deadline) || '-')}</span>
+              <span class="chip">Fee: Rp${Number(job.fee || 0).toLocaleString('id-ID')}</span>
+            </div>
+          </article>
+        `).join('');
+
+        // pasang listener klik per kartu
+        box.querySelectorAll('.job').forEach(el => {
+          const idx = Number(el.dataset.i);
+          el.addEventListener('click', () => openJobDetail(mine[idx]));
+        });
+      }catch(e){
+        box.innerHTML = '<p class="muted">Gagal memuat pekerjaan.</p>';
+      }
+    }
+
+    // Detail job
+    function openJobDetail(job){
+      openModal('Detail Pekerjaan',
+        `
+          <h3 style="margin:.1rem 0 .6rem">${WARPRO_API.sanitize(job.title || '-')}</h3>
+          <p>${WARPRO_API.sanitize(job.description || '')}</p>
+          <div class="row" style="gap:8px;margin-top:.5rem">
+            <span class="status-badge ${statusClass(job.status)}">${WARPRO_API.sanitize(job.status)}</span>
+            <span class="chip">Deadline: ${WARPRO_API.sanitize(fmtDate(job.deadline) || '-')}</span>
+            <span class="chip">Fee: Rp${Number(job.fee || 0).toLocaleString('id-ID')}</span>
+          </div>
+        `,
+        `<button class="btn" onclick="closeModal()">Tutup</button>`
+      );
     }
   </script>
 </body>

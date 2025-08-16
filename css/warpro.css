@@ -4,12 +4,14 @@ body {
   margin: 0;
   padding: 0;
 }
+
 header {
   background: #2e2e2e;
   color: white;
   padding: 1rem 2rem;
   text-align: center;
 }
+
 nav {
   background: #444;
   color: white;
@@ -17,14 +19,17 @@ nav {
   display: flex;
   justify-content: space-between;
 }
+
 nav a {
   color: white;
   text-decoration: none;
   margin-right: 1rem;
 }
+
 main {
   padding: 2rem;
 }
+
 section {
   background: white;
   padding: 1rem 2rem;
@@ -32,9 +37,11 @@ section {
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
+
 h2 {
   color: #333;
 }
+
 .cta-button {
   background: #d35400;
   color: white;
@@ -44,19 +51,23 @@ h2 {
   cursor: pointer;
   margin-top: 10px;
 }
+
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
 }
+
 th, td {
   padding: 0.75rem;
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
+
 th {
   background: #f0f0f0;
 }
+
 .popup {
   display: none;
   position: fixed;
@@ -69,18 +80,22 @@ th {
   box-shadow: 0 0 20px rgba(0,0,0,0.3);
   z-index: 1000;
 }
+
 .popup.show {
   display: block;
 }
+
 .popup-header {
   font-weight: bold;
   margin-bottom: 1rem;
 }
+
 .popup-close {
   float: right;
   cursor: pointer;
   color: red;
 }
+
 .profile-card {
   padding: 1rem;
   background: #fffbe6;
@@ -106,6 +121,7 @@ th {
   gap: 1rem;
   margin-top: 1rem;
 }
+
 .job-card {
   background: #ffffff;
   border-radius: 8px;
@@ -114,29 +130,52 @@ th {
   cursor: pointer;
   transition: transform 0.2s ease;
 }
+
 .job-card:hover {
   transform: scale(1.02);
 }
+
 .job-card h3 {
   margin-top: 0;
   font-size: 1.1rem;
 }
+
 .job-card p {
   margin: 0.5rem 0;
   font-size: 0.9rem;
 }
-.status-progress {
-  color: #e67e22;
+
+/* Fee */
+.job-card .fee {
+  color: #16a085;
   font-weight: bold;
 }
-.status-pending {
-  color: #c0392b;
+
+/* Status badge */
+.job-card .status {
   font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+  font-size: 0.85rem;
 }
-.status-complete {
-  color: #27ae60;
-  font-weight: bold;
+
+/* Status styles based on values: 'Baru', 'Sedang Berjalan', 'Selesai' */
+.status-belum-diambil {
+  background: #c0392b;
+  color: white;
 }
+
+.status-sedang-berjalan {
+  background: #e67e22;
+  color: white;
+}
+
+.status-selesai {
+  background: #27ae60;
+  color: white;
+}
+
 footer {
   background: #2e2e2e;
   color: white;
@@ -144,6 +183,7 @@ footer {
   padding: 1rem;
   margin-top: 2rem;
 }
+
 footer a {
   color: #f39c12;
   text-decoration: none;

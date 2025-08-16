@@ -2,8 +2,12 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Login - WARPRO</title>
+
+  <!-- Core -->
+  <script src="../js/warpro.js" defer></script>
+
   <style>
     :root { --accent:#d35400; --bg:#f4f4f4; --card:#ffffff; --text:#2e2e2e;}
     *{box-sizing:border-box}
@@ -12,24 +16,36 @@
     h1{margin:0 0 8px;color:var(--text);text-align:center;font-size:1.5rem}
     p.sub{margin:0 0 20px;color:#666;text-align:center;font-size:.92rem}
     label{display:block;margin:10px 0 6px;color:#444;font-weight:600}
-    input[type="text"],input[type="password"],input[type="email"]{
-      width:100%;padding:12px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none
+    input[type="text"],input[type="password"]{
+      width:100%;padding:12px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;background:#fff
     }
-    .row{display:flex;gap:10px}
-    .row > div{flex:1}
+
+    /* ====== AREA PASSWORD DENGAN TOGGLE ====== */
     .field{position:relative}
+    /* beri ruang untuk tombol mata kita */
+    #password{ padding-right:56px; }
+    /* sembunyikan ikon reveal bawaan Edge/IE agar tidak bentrok */
+    input[type="password"]::-ms-reveal,
+    input[type="password"]::-ms-clear { display:none; }
+
     .toggle{
       position:absolute;right:10px;top:50%;transform:translateY(-50%);
-      background:none;border:none;cursor:pointer;font-size:.9rem;color:#777;padding:2px 6px
+      display:inline-grid; place-items:center;
+      width:36px; height:34px; border-radius:8px;
+      background:#fff; border:1px solid #ddd; color:#555;
+      cursor:pointer; padding:0; margin:0; outline:none;
     }
-    .fx{display:flex;align-items:center;justify-content:space-between;margin:8px 0 14px}
+    .toggle:hover{ background:#fafafa }
+    .toggle svg{ width:18px; height:18px; }
+
+    .fx{display:flex;align-items:center;justify-content:space-between;margin:8px 0 14px;gap:10px}
     .fx label.chk{display:flex;align-items:center;gap:8px;font-weight:500;color:#555;cursor:pointer}
     .fx a{color:var(--accent);text-decoration:none;font-size:.9rem}
     button.cta{
       width:100%;padding:12px 14px;background:var(--accent);color:#fff;border:none;border-radius:8px;
       cursor:pointer;font-weight:700;letter-spacing:.2px;margin-top:6px
     }
-    button.cta:hover{filter:brightness(.95)}
+    button.cta[disabled]{opacity:.7;cursor:not-allowed}
     .err{color:#c0392b;background:#fdecea;border:1px solid #f5c2c7;padding:10px;border-radius:8px;margin:10px 0;display:none}
     .hint{margin-top:14px;color:#777;font-size:.85rem}
     .navtop{position:fixed;left:12px;top:12px}
@@ -43,89 +59,135 @@
     <h1>Login WARPRO</h1>
     <p class="sub">Gunakan akun resmi dari kami untuk masuk.</p>
 
-    <div class="err" id="errBox">Username atau password salah.</div>
+    <div class="err" id="errBox"></div>
 
-    <label for="username">Username</label>
-    <input id="username" type="text" placeholder="username" autocomplete="username" />
+    <form id="loginForm" autocomplete="on">
+      <label for="username">Username</label>
+      <input id="username" name="username" type="text" placeholder="username" autocomplete="username" />
 
-    <label for="password">Password</label>
-    <div class="field">
-      <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
-      <!-- <button class="toggle" type="button" id="togglePw">Lihat</button> -->
-    </div>
+      <label for="password">Password</label>
+      <div class="field">
+        <input id="password" name="password" type="password" placeholder="" autocomplete="current-password" />
+        <!-- tombol mata custom (ikon) -->
+        <button class="toggle" type="button" id="togglePw" aria-label="Tampilkan sandi" aria-pressed="false" title="Lihat/Sembunyikan sandi">
+          <!-- eye (default) -->
+          <svg id="eyeOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          <!-- eye-off (disembunyikan awal) -->
+          <svg id="eyeOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+            <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.77 21.77 0 0 1 5.06-5.94"/>
+            <path d="M1 1l22 22"/>
+            <path d="M9.88 9.88A3 3 0 0 0 12 15a3 3 0 0 0 2.12-.88"/>
+          </svg>
+        </button>
+      </div>
 
-    <div class="fx">
-      <label class="chk">
-        <input id="remember" type="checkbox" /> Ingat saya
-      </label>
-      <a href="#" onclick="alert('Hubungi admin WARPRO untuk reset kata sandi.');return false;">Lupa sandi?</a>
-    </div>
+      <div class="fx">
+        <label class="chk">
+          <input id="remember" type="checkbox" /> Ingat saya
+        </label>
+        <a href="#" id="forgot">Lupa sandi?</a>
+      </div>
 
-    <button class="cta" id="btnLogin">Masuk</button>
+      <button class="cta" id="btnLogin" type="submit">Masuk</button>
+    </form>
+
+    <p class="hint">Belum punya akun? Hubungi admin WARPRO.</p>
   </div>
 
   <script>
-    // Jika sudah login, arahkan sesuai peran
-    (function redirectIfLoggedIn(){
-      const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
-      const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
-      if(isLoggedIn){
-        window.location.href = isAdmin ? 'admin.html' : 'profil.html';
-      }
-    })();
-
-    const $ = (id)=>document.getElementById(id);
-    const errBox = $('errBox');
-    const u = $('username');
-    const p = $('password');
-    const remember = $('remember');
-
-    // Restore username kalau "ingat saya"
-    (function restoreRemembered(){
-      const rememberedUser = localStorage.getItem('rememberedUser');
-      if(rememberedUser){
-        u.value = rememberedUser;
-        remember.checked = true;
-      }
-    })();
-
-    function doLogin(){
-      const user = u.value.trim();
-      const pass = p.value;
-
-      // Reset error
-      errBox.style.display = 'none';
-
-      // Demo auth (hardcoded)
-      if(user === 'admin' && pass === 'admin123'){
-        sessionStorage.setItem('isLoggedIn','true');
-        sessionStorage.setItem('isAdmin','true');
-        sessionStorage.setItem('username','admin');
-        sessionStorage.setItem('email','admin@warpro.local');
-        if(remember.checked){ localStorage.setItem('rememberedUser', user); } else { localStorage.removeItem('rememberedUser'); }
-        window.location.href = 'admin.html';
+    // Auto-redirect bila sudah login
+    document.addEventListener('DOMContentLoaded', () => {
+      if (sessionStorage.getItem('isLoggedIn') === 'true') {
+        const to = (sessionStorage.getItem('isAdmin') === 'true') ? 'admin.html' : 'profil.html';
+        window.location.href = to;
         return;
       }
-      if(user === 'rashad' && pass === '1234'){
-        sessionStorage.setItem('isLoggedIn','true');
-        sessionStorage.setItem('isAdmin','false');
-        sessionStorage.setItem('username','rashad');
-        sessionStorage.setItem('email','rashad@example.com');
-        if(remember.checked){ localStorage.setItem('rememberedUser', user); } else { localStorage.removeItem('rememberedUser'); }
-        window.location.href = 'profil.html';
-        return;
+      // Prefill "ingat saya"
+      const saved = localStorage.getItem('warpro_username');
+      if (saved) {
+        document.getElementById('username').value = saved;
+        document.getElementById('remember').checked = true;
       }
-
-      // Jika gagal
-      errBox.textContent = 'Username atau password salah.';
-      errBox.style.display = 'block';
-    }
-
-    $('btnLogin').addEventListener('click', doLogin);
-    // Enter untuk submit
-    document.addEventListener('keydown', (e)=>{
-      if(e.key === 'Enter') doLogin();
     });
+
+    // Toggle tampil/samarkan password (ikon + label aksesibilitas)
+    document.getElementById('togglePw').addEventListener('click', () => {
+      const pw = document.getElementById('password');
+      const btn = document.getElementById('togglePw');
+      const isHidden = pw.type === 'password';
+
+      pw.type = isHidden ? 'text' : 'password';
+      btn.setAttribute('aria-pressed', String(isHidden));
+      btn.setAttribute('aria-label', isHidden ? 'Sembunyikan sandi' : 'Tampilkan sandi');
+
+      // switch ikon
+      document.getElementById('eyeOn').style.display  = isHidden ? 'none' : 'block';
+      document.getElementById('eyeOff').style.display = isHidden ? 'block' : 'none';
+    });
+
+    // Lupa sandi
+    document.getElementById('forgot').addEventListener('click', (e) => {
+      e.preventDefault();
+      alert('Lupa sandi? Hubungi admin WARPRO untuk reset kata sandi.');
+    });
+
+    // Submit handler
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await doLogin();
+    });
+
+    async function doLogin(){
+      const btn   = document.getElementById('btnLogin');
+      const errEl = document.getElementById('errBox');
+      const user  = document.getElementById('username').value.trim();
+      const pass  = document.getElementById('password').value;
+      const rem   = document.getElementById('remember').checked;
+
+      errEl.style.display = 'none'; errEl.textContent = '';
+
+      if (!user || !pass) {
+        showErr('Username dan password wajib diisi.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Memproses...';
+
+      try {
+        // gunakan wrapper API (POST JSON + fallback tanpa preflight)
+        const data = await WARPRO_API.apiCall('login', { username: user, password: pass });
+        const u = (data && (data.user || data)) || {};
+        if (!u.username) throw new Error('Respon login tidak valid.');
+
+        // simpan sesi
+        sessionStorage.setItem('isLoggedIn','true');
+        sessionStorage.setItem('isAdmin', String(u.role === 'admin'));
+        sessionStorage.setItem('username', u.username);
+        sessionStorage.setItem('email', u.email || '');
+        sessionStorage.setItem('displayName', u.displayName || u.username);
+
+        // ingat username (tanpa password)
+        if (rem) localStorage.setItem('warpro_username', u.username);
+        else localStorage.removeItem('warpro_username');
+
+        // redirect (login.html ada di /pages)
+        window.location.href = (u.role === 'admin') ? 'admin.html' : 'profil.html';
+      } catch (e) {
+        showErr(e.message || 'Gagal login. Cek koneksi & kredensial Anda.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Masuk';
+      }
+
+      function showErr(msg){
+        errEl.textContent = msg;
+        errEl.style.display = 'block';
+      }
+    }
   </script>
 </body>
 </html>

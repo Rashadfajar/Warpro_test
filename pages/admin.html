@@ -2,173 +2,365 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin - WARPRO</title>
+  <!-- gunakan path relatif + cache buster -->
+  <script src="../js/warpro.js" defer></script>
+
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 2rem; }
-    .admin-panel { max-width: 700px; margin: auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    h2 { text-align: center; }
-    label { display: block; margin-top: 1rem; font-weight: bold; }
-    input, textarea, select {
-      width: 100%;
-      padding: 0.75rem;
-      margin-top: 0.25rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+    :root{
+      --bg:#f5f5f5; --card:#fff; --text:#1f2937; --muted:#6b7280; --accent:#d35400;
+      --ok:#27ae60; --warn:#e67e22; --bad:#c0392b; --line:#e5e7eb;
     }
-    button {
-      margin-top: 1rem;
-      padding: 0.6rem 1.2rem;
-      background: #d35400;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+    header{background:#2e2e2e;color:#fff;padding:1rem}
+    header .wrap{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between}
+    header a{color:#f39c12;text-decoration:none}
+
+    main{max-width:1100px;margin:auto;padding:1rem}
+    .card{background:var(--card);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.06);padding:1.1rem;margin-bottom:1rem}
+    .card h2{margin:.2rem 0 1rem}
+    .muted{color:var(--muted)}
+    label{display:block;margin:.5rem 0 .35rem;font-weight:600}
+    input[type="text"],input[type="date"],input[type="number"],input[type="password"],textarea,select{
+      width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:14px
     }
-    .logout {
-      text-align: right;
-      margin-bottom: 1rem;
+    textarea{min-height:90px;resize:vertical}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .cta{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px 14px;cursor:pointer;font-weight:700}
+    .btn{background:#e5e7eb;color:#111827;border:none;border-radius:10px;padding:10px 12px;cursor:pointer}
+    .btn.delete{background:var(--bad);color:#fff}
+    .btn.save{background:var(--ok);color:#fff}
+    .btn.small{padding:6px 10px;border-radius:8px}
+    .error{background:#ffecec;border:1px solid #ffb4b4;color:#8a2323;border-radius:10px;padding:10px;margin:.5rem 0;display:none}
+    .success{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;border-radius:10px;padding:10px;margin:.5rem 0;display:none}
+
+    .job-list{display:grid;gap:12px}
+    .job{border:1px solid var(--line);border-left:6px solid #7f8c8d;border-radius:12px;padding:12px 14px;background:#fff}
+    .job h3{margin:.2rem 0 .3rem;font-size:1.05rem}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{background:#f4f6f9;border:1px solid #e5eaf0;border-radius:999px;padding:4px 8px;color:#3b4859;font-size:.85rem}
+
+    @media (max-width: 900px){
+      .row.stack > *{flex:1 1 100%}
     }
-    .logout a {
-      text-decoration: none;
-      color: #d35400;
+    /* --- Header/Nav polish --- */
+    header{background:#2e2e2e;color:#fff;padding:.85rem}
+    header .wrap{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between}
+
+    .topnav{display:flex;align-items:center;gap:.5rem}
+    .topnav .navlink{
+      display:inline-flex; align-items:center; gap:.45rem;
+      color:#f39c12; text-decoration:none;
+      padding:.35rem .65rem; border-radius:8px;
+      transition:background .15s ease, color .15s ease, border-color .15s ease;
     }
-    .job-list { margin-top: 2rem; }
-    .job-item {
-      border: 1px solid #ddd;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border-radius: 8px;
-      background: #fdfdfd;
+    .topnav .navlink .icon{line-height:1; font-size:1.05rem; transform:translateY(1px)}
+    .topnav .navlink:hover{background:rgba(243,156,18,.16)}
+
+    .topnav .nav-logout{
+      color:#ffd7c7; border:1px solid rgba(255,255,255,.22);
+      background:transparent;
     }
-    .job-actions { margin-top: 0.5rem; }
-    .job-actions button {
-      margin-right: 0.5rem;
-      background: #888;
+    .topnav .nav-logout:hover{
+      background:rgba(192,57,43,.28); color:#fff; border-color:rgba(192,57,43,.55);
     }
-    .job-actions button.delete {
-      background: #c0392b;
+
+    /* responsive tweaks */
+    @media (max-width:520px){
+      header{padding:.7rem}
+      .topnav{gap:.35rem}
+      .topnav .navlink{padding:.3rem .5rem}
     }
+
   </style>
 </head>
 <body>
-  <div class="admin-panel">
-    <nav style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
-        <div>
-            <a href="../index.html" style="margin-right: 1rem;">🏠 Beranda</a>
-            <a href="admin.html" style="font-weight: bold;">➕ Tambah Job</a>
+  <header>
+    <div class="wrap">
+      <div class="brand">⚙️ <strong>Admin Panel WARPRO</strong></div>
+      <nav class="topnav">
+        <a class="navlink" href="../index.html">
+          <span class="icon">🏠</span><span>Beranda</span>
+        </a>
+        <a class="navlink nav-logout" href="login.html" onclick="logout();return false;">
+          <span class="icon">↩</span><span>Keluar</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main>
+    <!-- Tambah Job -->
+    <section class="card">
+      <h2>➕ Tambah Pekerjaan</h2>
+      <div id="errAdd" class="error"></div>
+      <div class="row stack">
+        <div style="flex:2 1 340px">
+          <label for="title">Judul</label>
+          <input id="title" type="text" placeholder="Contoh: Visualisasi data pelanggan" />
         </div>
-        <div>
-            <a href="login.html" onclick="sessionStorage.clear()">Logout</a>
+        <div style="flex:1 1 200px">
+          <label for="deadline">Deadline</label>
+          <input id="deadline" type="date" />
         </div>
-    </nav>
-    <h2>Admin Panel - Tambah dan Kelola Job</h2>
-    <form id="jobForm">
-      <input type="hidden" id="editIndex" value="">
-      <label>Judul:</label>
-      <input type="text" id="title" required>
+        <div style="flex:1 1 160px">
+          <label for="fee">Fee (Rp)</label>
+          <input id="fee" type="number" min="0" placeholder="50000" />
+        </div>
+      </div>
+      <label for="description">Deskripsi</label>
+      <textarea id="description" placeholder="Ringkasan tugas, kriteria, dsb."></textarea>
+      <div style="margin-top:.6rem">
+        <button class="cta" id="btnAdd">Tambah Job</button>
+      </div>
+      <p class="muted" style="margin:.5rem 0 0">Status awal selalu <em>Belum Diambil</em> (diatur server).</p>
+    </section>
 
-      <label>Deskripsi:</label>
-      <textarea id="description" required></textarea>
+    <!-- Daftar Job -->
+    <section class="card">
+      <h2>📋 Daftar Pekerjaan</h2>
+      <div id="jobsBox" class="job-list"><p class="muted">Memuat…</p></div>
+    </section>
 
-      <label>Deadline:</label>
-      <input type="date" id="deadline" required>
-
-      <label>Status:</label>
-      <select id="status" required>
-        <option value="Belum Diambil">Belum Diambil</option>
-        <option value="Sedang Berjalan">Sedang Berjalan</option>
-        <option value="Selesai">Selesai</option>
-      </select>
-
-      <button type="submit" id="submitBtn">Tambah Pekerjaan</button>
-    </form>
-
-    <div class="job-list" id="jobList"></div>
-  </div>
+    <!-- Reset Password User -->
+    <section class="card">
+      <h2>🔐 Reset Password User</h2>
+      <div class="muted" style="margin:-.4rem 0 .6rem">Admin menetapkan password sementara (user diminta segera mengganti setelah login).</div>
+      <div id="errReset" class="error"></div>
+      <div id="okReset" class="success"></div>
+      <div class="row stack">
+        <div style="flex:1 1 260px">
+          <label for="rpUser">Username</label>
+          <input id="rpUser" type="text" placeholder="mis. rashad27" />
+        </div>
+        <div style="flex:1 1 260px">
+          <label for="rpPass">Password baru</label>
+          <input id="rpPass" type="password" placeholder="min 6 karakter" />
+        </div>
+      </div>
+      <div style="margin-top:.6rem">
+        <button id="btnReset" class="cta">Reset Password</button>
+      </div>
+    </section>
+  </main>
 
   <script>
-    // Redirect jika bukan admin
-    if (sessionStorage.getItem('isAdmin') !== 'true') {
-      window.location.href = 'index.html';
-    }
-
-    const form = document.getElementById('jobForm');
-    const jobListContainer = document.getElementById('jobList');
-    const submitBtn = document.getElementById('submitBtn');
-
-    let jobs = JSON.parse(localStorage.getItem('adminJobs')) || [];
-
-    function saveJobs() {
-      localStorage.setItem('adminJobs', JSON.stringify(jobs));
-    }
-
-    function renderJobs() {
-      jobListContainer.innerHTML = '';
-      if (jobs.length === 0) {
-        jobListContainer.innerHTML = '<p>Belum ada pekerjaan yang ditambahkan.</p>';
-        return;
-      }
-
-      jobs.forEach((job, index) => {
-        const div = document.createElement('div');
-        div.className = 'job-item';
-        div.innerHTML = `
-          <strong>${job.title}</strong>
-          <p>${job.description}</p>
-          <p><strong>Deadline:</strong> ${job.deadline}</p>
-          <p><strong>Status:</strong> ${job.status}</p>
-          <div class="job-actions">
-            <button onclick="editJob(${index})">Edit</button>
-            <button class="delete" onclick="deleteJob(${index})">Hapus</button>
-          </div>
-        `;
-        jobListContainer.appendChild(div);
-      });
-    }
-
-    function editJob(index) {
-      const job = jobs[index];
-      document.getElementById('title').value = job.title;
-      document.getElementById('description').value = job.description;
-      document.getElementById('deadline').value = job.deadline;
-      document.getElementById('status').value = job.status;
-      document.getElementById('editIndex').value = index;
-      submitBtn.textContent = "Update Pekerjaan";
-    }
-
-    function deleteJob(index) {
-      if (confirm("Yakin ingin menghapus pekerjaan ini?")) {
-        jobs.splice(index, 1);
-        saveJobs();
-        renderJobs();
-      }
-    }
-
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      const newJob = {
-        title: document.getElementById('title').value,
-        description: document.getElementById('description').value,
-        deadline: document.getElementById('deadline').value,
-        status: document.getElementById('status').value
-      };
-      const editIndex = document.getElementById('editIndex').value;
-
-      if (editIndex !== '') {
-        jobs[editIndex] = newJob;
-        submitBtn.textContent = "Tambah Pekerjaan";
-        document.getElementById('editIndex').value = '';
-      } else {
-        jobs.push(newJob);
-      }
-
-      saveJobs();
-      renderJobs();
-      form.reset();
+    // Boot loader: tunggu warpro.js siap (maks 5 detik)
+    document.addEventListener('DOMContentLoaded', () => {
+      const start = Date.now();
+      (function waitWarpro(){
+        if (window.WARPRO_API) return init();              // ✅ cukup ini
+        if (Date.now() - start > 5000) {
+          alert('Gagal memuat warpro.js. Cek path: ../js/warpro.js (gunakan Live Server)');
+          return;
+        }
+        setTimeout(waitWarpro, 50);
+      })();
     });
 
-    renderJobs();
+    function init(){
+      // Hanya admin
+      if (!WARPRO_API.requireLogin()) return;
+      if (!WARPRO_API.isAdmin()) { window.location.href = '../index.html'; return; }
+      if (!window.API_BASE) { alert('API_BASE belum di-set di warpro.js'); return; }
+      if (!WARPRO.ADMIN_KEY){ alert('ADMIN_KEY belum di-set di warpro.js'); return; }
+
+      const { apiCall, sanitize, escapeAttr, escapeText } = WARPRO_API;
+      const API_BASE = window.API_BASE;
+
+      // ===== Helpers =====
+      const showErr = (id,msg)=>{ const el=document.getElementById(id); if(!el) return; el.textContent=msg; el.style.display='block'; };
+      const hideErr = (id)=>{ const el=document.getElementById(id); if(!el) return; el.textContent=''; el.style.display='none'; };
+      const showOk  = (id,msg)=>{ const el=document.getElementById(id); if(!el) return; el.textContent=msg; el.style.display='block'; setTimeout(()=>{el.style.display='none'},4000);};
+      const statusColor = (s)=> s==='Belum Diambil'?'#c0392b': s==='Sedang Berjalan'?'#e67e22': s==='Selesai'?'#27ae60':'#7f8c8d';
+      const toDateInputValue = (v)=>{ const d=new Date(v); if(isNaN(d)) return ''; const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), d2=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${d2}`; };
+      const normWorker = (s)=>{ s=String(s||'').trim(); if(!s || s==='-') return '-'; return s.startsWith('@')? s : '@'+s; };
+
+      // ===== List Jobs (GET) =====
+      async function loadJobs(){
+        const box = document.getElementById('jobsBox');
+        box.innerHTML = '<p class="muted">Memuat…</p>';
+        try{
+          const res = await fetch(`${API_BASE}?action=getJobs&ts=${Date.now()}`);
+          const j = await res.json();
+          if (!j.ok) { box.innerHTML = '<p class="muted">Gagal memuat daftar.</p>'; return; }
+
+          const jobs = (j.data && Array.isArray(j.data.jobs)) ? j.data.jobs.slice() : [];
+          jobs.sort((a,b)=> Number(b.id||0) - Number(a.id||0));
+
+          box.innerHTML = jobs.length ? jobs.map(jobView).join('') : '<p class="muted">Belum ada pekerjaan.</p>';
+          bindJobActions(jobs);
+        }catch(e){
+          box.innerHTML = `<p class="muted">Gagal memuat: ${WARPRO_API.escapeText(e.message)}</p>`;
+        }
+      }
+
+      function jobView(job){
+        return `
+          <article class="job" data-id="${escapeAttr(job.id)}" style="border-left-color:${statusColor(job.status)}">
+            <h3>#${escapeAttr(job.id)} • ${sanitize(job.title||'-')}</h3>
+            <div class="chips" style="margin:.2rem 0 .3rem">
+              <span class="chip">Status: ${sanitize(job.status||'-')}</span>
+              <span class="chip">Deadline: ${sanitize(job.deadline||'-')}</span>
+              <span class="chip">Worker: ${sanitize(job.worker||'-')}</span>
+              <span class="chip">Fee: Rp${Number(job.fee||0).toLocaleString('id-ID')}</span>
+            </div>
+            <div class="muted" style="margin:.2rem 0 .5rem">${sanitize(job.description||'')}</div>
+            <div class="row">
+              <button class="btn small edit">Edit</button>
+              <button class="btn small delete">Hapus</button>
+            </div>
+          </article>
+        `;
+      }
+
+      function jobEdit(job){
+        return `
+          <article class="job" data-id="${escapeAttr(job.id)}" style="border-left-color:${statusColor(job.status)}">
+            <h3>Edit #${escapeAttr(job.id)}</h3>
+            <label>Judul</label>
+            <input class="f-title" type="text" value="${escapeAttr(job.title||'')}" />
+            <label>Deskripsi</label>
+            <textarea class="f-desc">${escapeText(job.description||'')}</textarea>
+            <div class="row">
+              <div style="flex:1 1 200px">
+                <label>Deadline</label>
+                <input class="f-deadline" type="date" value="${escapeAttr(toDateInputValue(job.deadline))}" />
+              </div>
+              <div style="flex:1 1 200px">
+                <label>Fee (Rp)</label>
+                <input class="f-fee" type="number" min="0" value="${escapeAttr(job.fee||'')}" />
+              </div>
+            </div>
+            <div class="row">
+              <div style="flex:1 1 200px">
+                <label>Status</label>
+                <select class="f-status">
+                  <option ${job.status==='Belum Diambil'?'selected':''}>Belum Diambil</option>
+                  <option ${job.status==='Sedang Berjalan'?'selected':''}>Sedang Berjalan</option>
+                  <option ${job.status==='Selesai'?'selected':''}>Selesai</option>
+                </select>
+              </div>
+              <div style="flex:1 1 200px">
+                <label>Worker (@username atau '-')</label>
+                <input class="f-worker" type="text" value="${escapeAttr(job.worker||'-')}" />
+              </div>
+            </div>
+            <div class="row" style="margin-top:.5rem">
+              <button class="btn save">Simpan</button>
+              <button class="btn">Batal</button>
+            </div>
+          </article>
+        `;
+      }
+
+      function bindJobActions(current){
+        const box = document.getElementById('jobsBox');
+        box.querySelectorAll('.job').forEach(card=>{
+          const id = card.getAttribute('data-id');
+          const job = current.find(j=> String(j.id) === String(id));
+          if(!job) return;
+
+          card.querySelector('.edit').addEventListener('click', ()=>{
+            card.outerHTML = jobEdit(job);
+            bindEditActions(job);
+          });
+          card.querySelector('.delete').addEventListener('click', async ()=>{
+            if(!confirm(`Hapus job #${job.id} "${job.title}"?`)) return;
+            try{
+              await apiCall('deleteJob', { adminKey: WARPRO.ADMIN_KEY, id: job.id });
+              await loadJobs();
+            }catch(e){ alert('Gagal hapus: ' + e.message); }
+          });
+        });
+      }
+
+      function bindEditActions(job){
+        const box = document.getElementById('jobsBox');
+        const card = box.querySelector(`.job[data-id="${job.id}"]`);
+        const btnSave = card.querySelector('.save');
+        const btnCancel = card.querySelector('.btn:not(.save)');
+
+        btnCancel.addEventListener('click', ()=>{
+          card.outerHTML = jobView(job);
+          bindJobActions([job]);
+        });
+
+        btnSave.addEventListener('click', async ()=>{
+          const title = card.querySelector('.f-title').value.trim();
+          const desc  = card.querySelector('.f-desc').value.trim();
+          const deadline = card.querySelector('.f-deadline').value;
+          const fee   = card.querySelector('.f-fee').value.trim();
+          const status= card.querySelector('.f-status').value;
+          const worker= normWorker(card.querySelector('.f-worker').value);
+
+          if(!title || !desc || !deadline){ alert('Judul, deskripsi, dan deadline wajib.'); return; }
+
+          btnSave.disabled = true; btnSave.textContent = 'Menyimpan…';
+          try{
+            await apiCall('updateJob', {
+              adminKey: WARPRO.ADMIN_KEY,
+              id: job.id, title, description: desc, deadline, status, worker, fee
+            });
+            await loadJobs();
+          }catch(e){
+            alert('Gagal simpan: ' + e.message);
+          }finally{
+            btnSave.disabled = false; btnSave.textContent = 'Simpan';
+          }
+        });
+      }
+
+      // ===== Actions =====
+      document.getElementById('btnAdd').addEventListener('click', async ()=>{
+        hideErr('errAdd');
+        const title = document.getElementById('title').value.trim();
+        const description = document.getElementById('description').value.trim();
+        const deadline = document.getElementById('deadline').value;
+        const fee = document.getElementById('fee').value.trim();
+
+        if(!title || !description || !deadline || !fee){ showErr('errAdd','Semua field wajib diisi.'); return; }
+
+        const btn = document.getElementById('btnAdd');
+        btn.disabled = true; const prev=btn.textContent; btn.textContent='Menambahkan…';
+        try{
+          await apiCall('addJob', { adminKey: WARPRO.ADMIN_KEY, title, description, deadline, fee });
+          ['title','description','deadline','fee'].forEach(id=>document.getElementById(id).value='');
+          await loadJobs();
+        }catch(e){
+          showErr('errAdd', e.message || 'Gagal menambah job.');
+        }finally{
+          btn.disabled = false; btn.textContent = prev;
+        }
+      });
+
+      document.getElementById('btnReset').addEventListener('click', async ()=>{
+        hideErr('errReset');
+        const u = document.getElementById('rpUser').value.trim();
+        const p = document.getElementById('rpPass').value;
+        if(!u || !p){ showErr('errReset','Username dan password baru wajib diisi.'); return; }
+        if(p.length < 6){ showErr('errReset','Password minimal 6 karakter.'); return; }
+
+        const btn = document.getElementById('btnReset');
+        btn.disabled = true; const prev=btn.textContent; btn.textContent='Memproses…';
+        try{
+          await apiCall('adminResetPassword', { adminKey: WARPRO.ADMIN_KEY, username: u, newPassword: p });
+          document.getElementById('rpUser').value='';
+          document.getElementById('rpPass').value='';
+          showOk('okReset', `Password untuk @${u} sudah di-reset.`);
+        }catch(e){
+          showErr('errReset', e.message || 'Gagal reset password.');
+        }finally{
+          btn.disabled = false; btn.textContent = prev;
+        }
+      });
+
+      // mulai
+      loadJobs();
+    }
   </script>
 </body>
 </html>
